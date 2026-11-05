@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Тень и реальность</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--t:#e6e2ff;--b:rgba(205,195,255,.4);--g:rgba(140,125,255,.15);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;overflow:hidden;background:radial-gradient(120% 90% at 50% 25%,#2b2070,#11134d 48%,#05061c);font-family:'Cormorant Garamond',Georgia,serif;color:var(--t);touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{position:fixed;inset:0;display:block;cursor:grab}
+canvas:active{cursor:grabbing}
+@keyframes dz{40%{filter:blur(calc(5px*var(--fx,1))) brightness(calc(1 + .7*var(--fx,1))) saturate(calc(1 + .5*var(--fx,1)))}}
+@keyframes rp{to{transform:scale(130);opacity:0}}
+@keyframes pl{50%{box-shadow:0 0 44px 8px rgba(255,200,250,.7);border-color:#ffd6f6}}
+@keyframes fi{0%{opacity:0;transform:translateY(10px)}15%,80%{opacity:1;transform:none}100%{opacity:0}}
+.rp{position:fixed;left:50%;top:50%;width:20px;height:20px;margin:-10px;border-radius:50%;border:1px solid #f0e1ff;box-shadow:0 0 40px 14px rgba(170,150,255,.55),inset 0 0 40px 10px rgba(170,150,255,.4);pointer-events:none;z-index:3;opacity:var(--br,1);animation:rp 1.6s cubic-bezier(.2,.6,.3,1) forwards}
+.vg{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(3,3,22,.7))}
+#dm{position:fixed;inset:0;background:#01020c;opacity:0;pointer-events:none;z-index:1}
+button{font:inherit;color:var(--t);background:var(--g);border:1px solid var(--b);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);cursor:pointer;transition:.35s;box-shadow:0 0 22px rgba(130,110,255,.28)}
+button:hover{background:rgba(175,155,255,.3);box-shadow:0 0 34px rgba(175,155,255,.6)}
+.pl{animation:pl 2s infinite}
+.nv{position:fixed;top:50%;margin-top:-50px;width:54px;height:100px;border-radius:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:34px;line-height:1;padding:0;z-index:2}
+.nv i{font-size:14px;letter-spacing:.15em;opacity:.8;font-style:normal}
+#pv{left:max(16px,env(safe-area-inset-left,0px))}#nx{right:max(16px,env(safe-area-inset-right,0px))}
+#sp{position:fixed;right:max(18px,env(safe-area-inset-right,0px));top:calc(22px + env(safe-area-inset-top,0px));z-index:2;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#sd{width:44px;height:44px;border-radius:50%;font-size:22px;padding:0}
+#sb{display:flex;gap:10px}#lg{width:44px;height:44px;border-radius:50%;font-size:14px;letter-spacing:.04em;padding:0}
+#sd.m{opacity:.5;text-decoration:line-through}
+#vp{display:none;padding:10px 16px;border-radius:18px;background:var(--g);border:1px solid var(--b);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 0 28px rgba(130,110,255,.3)}
+#sp.o #vp{display:block}
+#vp label{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:17px;margin:6px 0}
+input[type=range]{-webkit-appearance:none;appearance:none;width:120px;height:3px;border-radius:2px;background:rgba(210,200,255,.38);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#efe8ff;box-shadow:0 0 12px #b9a8ff}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:#efe8ff;box-shadow:0 0 12px #b9a8ff}
+#bt{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(96vw,720px);z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none}
+#dk{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 12px;width:100%;pointer-events:auto}
+#dk button{padding:9px 18px;border-radius:26px;font-size:19px;white-space:nowrap}
+#rs span{display:inline-block;transition:transform .9s cubic-bezier(.3,1.4,.5,1)}
+#dt{display:flex;gap:9px}#dt i{width:9px;height:9px;border-radius:50%;border:1px solid var(--t);opacity:.55;cursor:pointer;transition:.4s}
+#dt i.a{background:var(--t);opacity:1;box-shadow:0 0 10px var(--t)}#dt i.d{background:#ffc8f4;border-color:#ffc8f4;opacity:1}
+#ti{position:fixed;left:max(28px,env(safe-area-inset-left,0px));top:calc(24px + env(safe-area-inset-top,0px));pointer-events:none;opacity:0;z-index:2;max-width:calc(100vw - 170px);text-shadow:0 0 20px #6a5cff}
+#ti b{display:block;font-size:13px;font-weight:600;letter-spacing:.45em;opacity:.75}
+#ti h1{margin:2px 0 0;font-size:38px;font-weight:400;font-style:italic}
+#ms{width:min(560px,88vw);text-align:center;font-size:22px;line-height:1.25;font-style:italic;opacity:0;transition:opacity 1s;pointer-events:none;text-shadow:0 0 18px #5b4cff,0 0 4px #05061c,0 0 10px #05061c}
+#ms.on{opacity:1}
+@media(max-width:640px){#dk{gap:8px}#dk button{padding:8px 12px;font-size:16px}#dt{order:9;width:100%;justify-content:center}.nv{width:44px;height:84px;font-size:28px}#ti h1{font-size:28px}#ms{font-size:19px}#fw input{width:150px!important}}
+#ed{position:fixed;inset:0;z-index:6;display:none;flex-direction:column;background:linear-gradient(#1d1766,#090b38);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#ed canvas{position:static;flex:1;min-height:0;width:100%;cursor:crosshair}
+#eh{padding:14px 20px 0;font-size:26px;font-style:italic}#ei{padding:2px 20px;min-height:26px;font-size:18px;color:#ffd6f6}
+.er{display:flex;flex-wrap:wrap;gap:8px;padding:4px 14px 8px;align-items:center;justify-content:center}.er button{padding:7px 14px;border-radius:22px;font-size:17px}.er label{display:flex;align-items:center;gap:8px;font-size:17px}
+@media(max-height:520px){#bt{width:min(720px,calc(100vw - 150px))}}
+</style></head><body>
+<div class="vg"></div><div id="dm"></div><div id="ti"></div>
+<div id="sp"><div id="sb"><button id="lg" title="Язык / Language">RU</button><button id="sd" title="Звук">♪</button></div><div id="vp"><label><span id="l1">Музыка</span><input id="vm" type="range" min="0" max="100"></label><label><span id="l2">Эффекты</span><input id="vx" type="range" min="0" max="100"></label><label><span id="l3">Яркость</span><input id="vb" type="range" min="30" max="100"></label></div></div>
+<button id="pv" class="nv" title="Предыдущий сон">‹<i></i></button><button id="nx" class="nv" title="Следующий сон">›<i></i></button>
+<div id="bt"><div id="ms"></div><div id="dk"><label id="fw" style="display:none;align-items:center;gap:10px;font-size:19px"><span id="fl">☀ Фокус</span> <input id="fc" type="range" min="0" max="100" value="12" style="width:190px"></label><button id="hn">✦ Подсказка</button><button id="rs"><span>↻</span> Заново</button><div id="dt"></div><button id="sv">☾ Решить</button><button id="ce">✎ Свой уровень</button></div></div>
+<div id="ed"><div id="eh"></div><canvas id="ec"></canvas><div id="ei"></div><div id="eb" class="er"></div><div class="er"><label><span id="el"></span><input id="e1" type="range" min="-80" max="80"></label><label>↕<input id="e2" type="range" min="20" max="50"></label><button id="ep"></button><button id="ex"></button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),V=(x,y,z)=>new THREE.Vector3(x,y,z),cl=(v,a,b)=>Math.max(a,Math.min(b,v)),Rn=Math.random;
+const SP=60,RR=12,WZ=-6,TH=[-.95,.95],PH=[.2,.5];
+let DT=.016,zD=1,KS=1,cur=0,tm=0,last=performance.now(),cx=0,mx=0,my=0,camD=34,dr=0,px=0,py=0,mt=0,pth=0,pph=0,rn=0,sn=6,sv=null;
+const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+let LG=lsg('lg')=='en'?'en':'ru',BR=cl(+(lsg('br')||1),.3,1);
+const ST={ru:{dream:'СОН',hint:'Подсказка',reset:'Заново',solve:'Решить',focus:'Фокус',music:'Музыка',fx:'Эффекты',bright:'Яркость',snd:'Звук',prev:'Предыдущий сон',next:'Следующий сон',lang:'Язык / Language',ttl:'Тень и реальность',one:'Один дух дошёл — веди второго',solved:'Сон разгадан ✦ Загляни в следующий — стрелка справа',wake:'Ты проснулся… или всё ещё спишь?',again:'Сон начинается заново…',isle:'Островок! Теперь следующий мост — нужен другой угол луны',door:'Тень стала дверью ✦',auto:'Луна сама ищет верный угол…'},
+en:{dream:'DREAM',hint:'Hint',reset:'Restart',solve:'Solve',focus:'Focus',music:'Music',fx:'Effects',bright:'Brightness',snd:'Sound',prev:'Previous dream',next:'Next dream',lang:'Язык / Language',ttl:'Shadow and Reality',one:'One spirit has arrived — guide the other',solved:'Dream solved ✦ Peek into the next one — the arrow on the right',wake:'You woke up… or are you still dreaming?',again:'The dream begins anew…',isle:'An islet! Now the next bridge — the moon needs another angle',door:'The shadow became a door ✦',auto:'The moon is finding the right angle…'}};
+const tr=k=>ST[LG][k];
+const ct=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t};
+const gr=a=>ct(128,128,g=>{const r=g.createRadialGradient(64,64,0,64,64,64);a.forEach(s=>r.addColorStop(s[0],s[1]));g.fillStyle=r;g.fillRect(0,0,128,128)});
+const glow=gr([[0,'#fff'],[.25,'rgba(255,255,255,.5)'],[1,'rgba(255,255,255,0)']]),pooT=gr([[0,'rgba(255,255,255,.9)'],[.5,'rgba(255,255,255,.45)'],[1,'rgba(255,255,255,0)']]);
+const rng=ct(128,128,g=>{g.strokeStyle='#fff';g.lineWidth=4;g.shadowColor='#fff';g.shadowBlur=12;g.beginPath();g.arc(64,64,44,0,7);g.stroke()});
+const frT=ct(128,192,g=>{g.strokeStyle='#fff';g.lineWidth=5;g.shadowColor='#fff';g.shadowBlur=14;g.strokeRect(22,16,84,160)});
+const stT=ct(128,128,g=>{g.fillStyle='#fff';g.shadowColor='#fff';g.shadowBlur=14;g.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,r=i%2?9:56;g.lineTo(64+Math.cos(a)*r,64+Math.sin(a)*r)}g.fill()});
+const cld=ct(256,128,g=>{for(let i=0;i<10;i++){const x=70+Rn()*116,y=52+Rn()*24,r=22+Rn()*22,q=g.createRadialGradient(x,y,0,x,y,r);q.addColorStop(0,'rgba(255,255,255,.55)');q.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=q;g.fillRect(0,0,256,128)}});
+const mnT=ct(256,256,g=>{g.fillStyle='#fff';g.fillRect(0,0,256,256);for(let i=0;i<24;i++){g.fillStyle='rgba(110,100,170,'+(.08+Rn()*.16)+')';g.beginPath();g.arc(Rn()*256,Rn()*256,6+Rn()*26,0,7);g.fill()}});
+// фон уровня: мягкое пятно без краёв, плавно растворяется в ночном небе
+const wT=(a,b)=>ct(512,300,g=>{let r=g.createLinearGradient(0,0,0,300);r.addColorStop(0,a);r.addColorStop(1,b);g.fillStyle=r;g.fillRect(0,0,512,300);
+ g.strokeStyle='rgba(210,200,255,.1)';g.lineWidth=2;for(let i=1;i<8;i++){g.beginPath();g.arc(256,360,i*58,Math.PI,0);g.stroke()}
+ g.globalCompositeOperation='destination-in';g.save();g.scale(1,300/512);r=g.createRadialGradient(256,256,0,256,256,256);[[0,1],[.2,.86],[.4,.56],[.6,.3],[.8,.1],[1,0]].forEach(s=>r.addColorStop(s[0],'rgba(255,255,255,'+s[1]+')'));g.fillStyle=r;g.fillRect(0,0,512,512);g.restore()});
+
+const rd=new THREE.WebGLRenderer({antialias:true,alpha:true});rd.setPixelRatio(Math.min(devicePixelRatio,2));rd.outputEncoding=THREE.sRGBEncoding;document.body.prepend(rd.domElement);
+const cv=rd.domElement,sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(36,1,1,400);
+sc.add(new THREE.HemisphereLight(0x9a8cff,0x1a1450,.75));
+const spr=(map,col,s,op,add=1,ro=5)=>{const m=new THREE.Sprite(new THREE.SpriteMaterial({map,color:col,transparent:true,opacity:op,depthWrite:false,blending:add?THREE.AdditiveBlending:THREE.NormalBlending}));m.scale.set(s,s,1);m.renderOrder=ro;sc.add(m);return m};
+const pts=(pos,size,col,op,ro)=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));const p=new THREE.Points(g,new THREE.PointsMaterial({size,map:glow,color:col,transparent:true,opacity:op,depthWrite:false,blending:THREE.AdditiveBlending}));p.renderOrder=ro;p.frustumCulled=false;sc.add(p);return p};
+const spt=new Float32Array(7200);for(let i=0;i<2400;i++)spt.set([-70+Rn()*960,-14+Rn()*50,-70+Rn()*30],i*3);
+const stars=pts(spt,.7,0xcfd4ff,.8,2);
+const DN=540,dp=new Float32Array(DN*3),dv=[];for(let i=0;i<DN;i++){dp.set([-25+Rn()*900,-4+Rn()*16,-4+Rn()*16],i*3);dv.push(Rn()*6.28)}
+const dust=pts(dp,.55,0xd9ccff,.85,8);
+const ss=spr(glow,0xffffff,1,0,1,2);ss.scale.set(7,.22,1);
+const cds=[];for(let i=0;i<144;i++){const back=i%3>0,s=back?16+Rn()*16:20+Rn()*14,m=spr(cld,[0x7f6cf0,0x5b7bff,0xb18cff][i%3],s,back?.34:.16,0,back?0:9);m.scale.y=s*.5;
+ m.position.set(-40+Rn()*900,back?-3+Rn()*16:(i%2?Rn()*1.5:8.5+Rn()*2),back?-9-Rn()*8:12+Rn()*6);m.userData.v=.15+Rn()*.4;cds.push(m)}
+const pt=[];
+function burst(x,y,z,col){const r=spr(rng,col,1,.9,1,6);r.position.set(x,y,z);pt.push({s:r,v:V(0,0,0),l:1.1,gr:16});
+ for(let i=0;i<46;i++){const s=spr(glow,col,.9+Rn()*1.2,1,1,6),a=Rn()*6.283,v=2+Rn()*7;s.position.set(x,y,z);pt.push({s,v:V(Math.cos(a)*v,Math.sin(a)*v+2,Rn()*2-1),l:1.6+Rn()})}}
+
+const _A=(x,y,w=2.6,g)=>[x,y,w,.97,0,.55,g],_B=(a,b,n,gap,ts,k,ex)=>{const s=Math.sign(b[0]-a[0]),L=Math.abs(b[0]-a[0])-2.6,w=(L-(n+1)*gap)/n;return ts.map((t,i)=>[+(a[0]+s*(1.3+gap+w/2+i*(w+gap))).toFixed(2),+(a[1]+(b[1]-a[1])*(i+1)/(n+1)).toFixed(2),+w.toFixed(2),t,k,.55,0,0,ex])};
+const _a0=[-11.2,0],_a1=[-.1,1.5],_a2=[11.1,3],_v0=[-11.4,-.4],_v1=[11.4,1.4],_v2=[-11.4,3.2],_v3=[11.4,5];
+// P: [x, y, ширина, глубина t, тип: 0 остров, 1/2 плита, 3/4 дверь, высота, группа, -, этаж]
+const LV=[
+{n:'I',t:'Порог',g:'Перетаскивай луну — тени сложатся в тропу для огонька ✦ Коснись экрана — зазвучит музыка сна ♪',h:['Тяни луну влево и вправо: разрозненные плиты сложатся тенью в мост к звезде.'],T:[[.5,.32]],S:[-.5,.32],lock:1,col:['#4a3fb4','#2f46a8'],mc:0xfff1cf,cc:[0xb9b2ff],
+ P:[[-9.4,0,3.4,.97,0],[-5.2,.5,5.2,.5,1],[-.2,1.1,5.2,.72,1],[4.8,1.7,5.2,.6,1],[8.9,2.3,3.4,.97,0]]},
+{n:'II',t:'Лестница теней',g:'Теперь луна слушается и по высоте — ищи угол, где плиты станут лестницей',h:['Луна движется и вверх-вниз. Найди положение, где плиты выстроятся ступенями к звезде.'],T:[[-.55,.42]],S:[.45,.26],col:['#4a2fa0','#33378e'],mc:0xe8dcff,cc:[0xc0a8ff],
+ P:[[-9.4,-.5,3.2,.97,0],[-5.6,.2,3.8,.46,1],[-2.2,1.4,3.2,.7,1],[1.4,2.8,3.2,.55,1],[4.6,4,3.2,.78,1],[8.2,4.9,3.2,.97,0]]},
+{n:'III',t:'Две луны',g:'Здесь луне придётся побывать в двух разных местах',h:['Сначала сложи левый мост — дух дойдёт до островка. Потом ищи новое положение для второго.','Второй мост (розовые плиты) складывается при другом положении луны.'],T:[[.62,.26],[-.5,.46]],S:[0,.35],col:['#5a2f94','#3a2c80'],mc:0xffd9ef,cc:[0xc9a6ff,0xff9fd2],
+ P:[[-9.6,-1,3.2,.97,0],[-6,-.4,3.6,.5,1],[-2.8,.4,3.2,.7,1],[.2,1,3,.97,0],[3.4,1.9,3.4,.6,2],[6.6,3.2,3,.76,2],[9.8,4.2,3,.97,0]]},
+{n:'IV',t:'Фокус',g:'Свет бывает мягким и резким. Тень держит шаг лишь там, где она резкая. Веди «Фокус» вправо — плиты проступают одна за другой, и огонёк идёт за резкостью ☀',h:['Огонёк идёт только по резким плитам. Двигай «Фокус» понемногу: дождись, пока огонёк шагнёт на следующую светящуюся плиту, и веди дальше. На втором мосту глубина плит идёт в обратную сторону — ползунок надо вести назад.'],T:[[.5,.32]],S:[.5,.32],lock:1,F:1,pw:1,fw:.16,sm:1,dd:.08,col:['#2a5a9c','#1c3a78'],mc:0xfff1cf,cc:[0xb9b2ff],
+ P:[_A(..._a0),..._B(_a0,_a1,4,.3,[.30,.42,.54,.66],1),_A(..._a1),..._B(_a1,_a2,4,.3,[.66,.54,.42,.30],1),_A(..._a2)]},
+{n:'V',t:'Три глубины',g:'Три этажа — три угла луны. На каждом этаже плиты резки на разной глубине, и фокус надо вести вслед за огоньком ☀',h:['Этаж первый. Найди угол луны, где плиты сложатся в мост. Затем веди «Фокус» от слабого к сильному — по шагу на плиту, в такт огоньку.','Этаж второй: другой угол луны (плиты розовые). Здесь глубина сначала убывает — фокус ведёт назад, а на последней плите снова вперёд.','Этаж третий: ещё один угол луны. Фокус — вверх по плитам, а на последней чуть назад.'],T:[[.6,.28],[-.6,.44],[.05,.22]],S:[-.3,.4],F:1,pw:1,fw:.12,sm:1,dd:.08,mg:.1,col:['#33307e','#1f2a6a'],mc:0xe8dcff,cc:[0xc0a8ff,0xff9fd2],
+ P:[_A(..._v0),..._B(_v0,_v1,5,.5,[.30,.42,.54,.66,.78],1,0),_A(..._v1),..._B(_v1,_v2,5,.5,[.78,.66,.54,.42,.54],2,1),_A(..._v2),..._B(_v2,_v3,5,.5,[.38,.50,.62,.74,.62],1,2),_A(..._v3)]},
+{n:'VI',t:'Алый и лазурный',g:'Две луны — алая и лазурная, и у каждой свой дух. Они движутся навстречу друг другу',h:['Алый дух идёт по теням алой луны, лазурный — по теням лазурной. Двигай луны: найди миг, когда сложатся оба пути сразу.'],T:[[.4,.32]],S:[-.4,.2],tw:1,dual:1,col:['#6a2a78','#2a3a8a'],mc:0xff9fb4,mc2:0x9fd0ff,cc:[0xff7a9a,0x6fb6ff],
+ P:[[-9.4,-.5,3.2,.97,0],[9,5.4,3,.97,0,.55,2],[4.8,4.8,4.4,.5,2],[.2,4.2,4.8,.6,2],[-4.4,3.6,4.4,.55,2],[-8.8,3,3.2,.97,0,.55,2],[-5.2,.2,4.6,.55,1],[-.4,.9,4.8,.62,1],[4.4,1.6,4.4,.58,1],[8.8,2.3,3.2,.97,0]]},
+{n:'VII',t:'Зеркальные луны',g:'Алая и лазурная луны — зеркальные близнецы: один жест двигает обе. Три этажа: когда оба духа дошли до островков, старые плиты рассыпаются, а новые проступают волной ✦',h:['Этаж первый. Луны ходят зеркально: одна вправо — другая влево. Алая тропа строже по ширине, лазурная — по высоте. Ищи угол, где обе цепочки теней разом выпрямятся.','Этаж второй. Плиты сменились — нужен новый угол, а строгости тропок поменялись местами. Осторожно: на старом угле висит половина моста, настоящий угол далеко от него.','Этаж третий. Мелкие плиты, оба пути строги по обеим осям. Следи, как рваные цепочки теней выпрямляются, когда луны подходят к верному месту.'],T:[[.58,.27],[-.52,.44],[.30,.31]],S:[-.15,.35],tw:2,dual:1,dd:.1,gp:.6,vt:.75,sm:.45,mg:.06,sp:3.8,hw:13.8,col:['#5a2a7a','#27399a'],mc:0xff9fb4,mc2:0x9fd0ff,cc:[0xff7a9a,0x6fb6ff],
+ P:[[-12.2,-0.8,1.8,.995,0,.55,1],[12.2,5.2,1.8,.995,0,.55,2],[10.48,5.33,1.45,0.7,2,0.45,0,0,0],[8.92,4.71,1.45,0.55,2,0.45,0,0,0],[7.37,5.09,1.45,0.7,2,0.45,0,0,0],[5.82,4.47,1.45,0.55,2,0.45,0,0,0],[4.1,4.6,1.8,.995,0,.55,2],[2.44,4.5,0.92,0.66,2,0.45,0,0,1],[1.22,4.4,0.92,0.45,2,0.45,0,0,1],[0,4.3,0.92,0.66,2,0.45,0,0,1],[-1.22,4.2,0.92,0.45,2,0.45,0,0,1],[-2.44,4.1,0.92,0.66,2,0.45,0,0,1],[-1.22,4.2,0.92,0.45,2,0.45,0,0,1,0],[-2.44,4.1,0.92,0.66,2,0.45,0,0,1,0],[-4.1,4,1.8,.995,0,.55,2],[-5.73,4.1,0.96,0.6,2,0.45,0,0,2],[-6.94,3.6,0.96,0.38,2,0.45,0,0,2],[-8.15,3.9,0.96,0.6,2,0.45,0,0,2],[-9.36,3.4,0.96,0.38,2,0.45,0,0,2],[-10.57,3.7,0.96,0.6,2,0.45,0,0,2],[-9.36,3.4,0.96,0.38,2,0.45,0,0,2,1],[-10.57,3.7,0.96,0.6,2,0.45,0,0,2,1],[-12.2,3.4,1.8,.995,0,.55,2],[-10.4,-0.68,1.2,0.55,1,0.45,0,0,0],[-8.9,-0.56,1.2,0.7,1,0.45,0,0,0],[-7.4,-0.44,1.2,0.55,1,0.45,0,0,0],[-5.9,-0.32,1.2,0.7,1,0.45,0,0,0],[-4.1,-0.2,1.8,.995,0,.55,1],[-2.52,0.15,1.16,0.45,1,0.45,0,0,1],[-1.26,-0.25,1.16,0.66,1,0.45,0,0,1],[0,0.35,1.16,0.45,1,0.45,0,0,1],[1.26,-0.05,1.16,0.66,1,0.45,0,0,1],[2.52,0.55,1.16,0.45,1,0.45,0,0,1],[-2.52,0.15,1.16,0.45,1,0.45,0,0,1,0],[-1.26,-0.25,1.16,0.66,1,0.45,0,0,1,0],[4.1,0.4,1.8,.995,0,.55,1],[5.73,0.7,0.96,0.38,1,0.45,0,0,2],[6.94,0.4,0.96,0.6,1,0.45,0,0,2],[8.15,0.9,0.96,0.38,1,0.45,0,0,2],[9.36,0.6,0.96,0.6,1,0.45,0,0,2],[10.57,1.1,0.96,0.38,1,0.45,0,0,2],[5.73,0.7,0.96,0.38,1,0.45,0,0,2,1],[6.94,0.4,0.96,0.6,1,0.45,0,0,2,1],[12.2,1,1.8,.995,0,.55,1]]},
+{n:'VIII',t:'Окно в тень',g:'Тупик. Но если тень совпадёт с дверью на стене — она станет проходом',h:['Крути луну, пока тень тёмной плиты не заполнит светящуюся раму. Тогда в тупике откроется путь.'],T:[[-.5,.38]],S:[.45,.2],po:[[0,1.8,2.2,3.6]],pt:.9,col:['#1e6a86','#27408e'],mc:0xdff6ff,cc:[0x9fe8ff],
+ P:[[-8.2,-.3,3.8,.97,0],[0,1.8,2.2,.62,3,3.6],[8.2,.3,3.8,.97,0]]},
+{n:'IX',t:'Замок из теней',g:'Каждая дверь — замок с ячейками. Собери его из теней: все ячейки должны загореться разом. Но не каждый набор деталей настоящий ✦',h:['Этаж первый. Двигай луну: тёмные плашки — тени деталей — плывут с разной скоростью. Заведи каждую в свою ячейку рамки; когда загорятся все три, дверь откроется.','Этаж второй. Четыре ячейки, а деталей больше, чем нужно: часть набора ложная. Если горят три из четырёх — это обман, ищи другой угол луны.','Этаж третий. Шесть ячеек и два ложных набора, которые почти собираются. Настоящий угол — тот, где загорятся все шесть. Следи за теми плашками, что бегут быстрее всех.'],T:[[0.5,0.3],[-0.5,0.4],[0.22,0.25]],TX:[[0.12,0.22],[-0.35,0.33],[0.62,0.44]],S:[-.15,.38],pt:.24,k:.6,hw:15.4,dd:.08,mg:[.05,.04,.03],sm:.4,col:['#1e5a86','#2a3a96'],mc:0xdff6ff,cc:[0x9fe8ff],
+ lk:[{x:-9,y:0.8,w:0.98,h:1.66,sl:[[-9,1.3,.78,.46],[-9,0.8,.78,.46],[-9,0.3,.78,.46]],a:0,b:1,ex:0},
+  {x:0,y:2.5,w:1.70,h:1.16,sl:[[-0.36,2.75,.78,.46],[0.36,2.75,.78,.46],[-0.36,2.25,.78,.46],[0.36,2.25,.78,.46]],a:1,b:2,ex:1},
+  {x:9,y:4.8,w:1.70,h:1.66,sl:[[8.64,5.3,.78,.46],[9.36,5.3,.78,.46],[8.64,4.8,.78,.46],[9.36,4.8,.78,.46],[8.64,4.3,.78,.46],[9.36,4.3,.78,.46]],a:2,b:28,ex:2}],
+ P:[[-13.5,-1.4,1.2,.995,0,.3],
+  [-4.5,0.6,1.2,.995,0,.3],
+  [4.5,2.6,1.2,.995,0,.3],
+  [-9,1.3,.7,0.8,5,.36,0,0,0],
+  [-9,0.8,.7,0.9,5,.36,0,0,0],
+  [-9,0.3,.7,0.7,5,.36,0,0,0],
+  [-0.36,2.75,.7,0.68,5,.36,0,1,1],
+  [0.36,2.75,.7,0.78,5,.36,0,1,1],
+  [-0.36,2.25,.7,0.88,5,.36,0,1,1],
+  [0.36,2.25,.7,0.58,5,.36,0,1,1],
+  [-0.36,2.75,.7,0.62,5,.36,0,1,1,null,0],
+  [0.36,2.75,.7,0.72,5,.36,0,1,1,null,0],
+  [0.36,2.25,.7,0.82,5,.36,0,1,1,null,0],
+  [8.64,5.3,.7,0.48,5,.36,0,2,2],
+  [9.36,5.3,.7,0.68,5,.36,0,2,2],
+  [8.64,4.8,.7,0.78,5,.36,0,2,2],
+  [9.36,4.8,.7,0.94,5,.36,0,2,2],
+  [8.64,4.3,.7,0.88,5,.36,0,2,2],
+  [9.36,4.3,.7,0.58,5,.36,0,2,2],
+  [8.64,5.3,.7,0.52,5,.36,0,2,2,null,1],
+  [9.36,5.3,.7,0.6,5,.36,0,2,2,null,1],
+  [8.64,4.8,.7,0.7,5,.36,0,2,2,null,1],
+  [8.64,4.3,.7,0.8,5,.36,0,2,2,null,1],
+  [9.36,4.3,.7,0.9,5,.36,0,2,2,null,1],
+  [9.36,5.3,.7,0.56,5,.36,0,2,2,null,2],
+  [8.64,4.8,.7,0.66,5,.36,0,2,2,null,2],
+  [9.36,4.8,.7,0.76,5,.36,0,2,2,null,2],
+  [9.36,4.3,.7,0.88,5,.36,0,2,2,null,2],
+  [13.5,4.6,1.2,.995,0,.3]]},
+{n:'X',t:'Ночное зеркало',g:'Две луны, два духа и три фокуса. Последний сон — самый зыбкий',h:['Сведи луны. Алый дух: близкие плиты (слабый фокус) до островка. Лазурный: средние плиты (средний фокус). Потом алому — дальние (сильный).'],T:[[.5,.3]],S:[-.5,.42],tw:2,dual:1,F:1,ft:[.3,.52,.75],col:['#5a2a7e','#1f3a9a'],mc:0xffc9a8,mc2:0xa8c8ff,cc:[0xff7a9a,0x6fb6ff],
+ P:[[-9.4,-.8,3.2,.97,0],[9,6.6,3,.97,0,.55,2],[5.8,6,3.4,.52,2],[2.4,5.4,3.4,.5,2],[-1,4.8,3.4,.54,2],[-4.4,4.2,3.4,.5,2],[-8.2,3.6,3.4,.97,0,.55,2],[-6,-.2,3.4,.3,1],[-2.7,.5,3.2,.32,1],[.3,1.2,3,.97,0],[3.3,2,3.2,.74,1],[6.4,2.8,3,.76,1],[9.4,3.5,3,.97,0]]}];
+
+const RU=LV.map(L=>({t:L.t,g:L.g,h:L.h})),EN=[
+{t:'Threshold',g:'Drag the moon — the shadows will form a path for the wisp ✦ Touch the screen — the music of the dream will begin ♪',h:['Drag the moon left and right: the scattered slabs will line up into a shadow bridge to the star.']},
+{t:'Staircase of Shadows',g:'Now the moon obeys in height too — find the angle where the slabs become a staircase',h:['The moon also moves up and down. Find the position where the slabs line up as steps to the star.']},
+{t:'Two Moons',g:'Here the moon will have to visit two different places',h:['First build the left bridge — the spirit will reach the islet. Then look for a new position for the second one.','The second bridge (pink slabs) forms at a different position of the moon.']},
+{t:'Focus',g:'Light can be soft or sharp. A shadow holds your step only where it is sharp. Slide “Focus” to the right — the slabs come into view one by one and the wisp follows the sharpness ☀',h:['The wisp walks only on sharp slabs. Move “Focus” a little at a time: wait until the wisp steps onto the next glowing slab, then keep going. On the second bridge the depths run backwards — slide the control back.']},
+{t:'Three Depths',g:'Three floors — three moon angles. On each floor the slabs are sharp at different depths, and you must pull the focus along with the wisp ☀',h:['Floor one. Find the moon angle where the slabs line up into a bridge. Then slide “Focus” from weak to strong — one step per slab, in time with the wisp.','Floor two: a different moon angle (pink slabs). Here the depth first decreases — pull the focus back, then forward again on the last slab.','Floor three: yet another moon angle. Slide the focus up along the slabs, and back a little on the last one.']},
+{t:'Scarlet and Azure',g:'Two moons — scarlet and azure — each with its own spirit. They move toward each other',h:['The scarlet spirit walks on the scarlet moon’s shadows, the azure one on the azure moon’s. Move the moons: find the moment when both paths form at once.']},
+{t:'Mirror Moons',g:'The scarlet and azure moons are mirror twins: one gesture moves both. Three floors: when both spirits reach their islets, the old slabs crumble and the new ones surface in a wave ✦',h:['Floor one. The moons move as mirror images: one goes right, the other left. The scarlet path is strict in width, the azure one in height. Find the angle where both chains of shadows straighten at once.','Floor two. The slabs have changed — you need a new angle, and the strict axes of the two paths have swapped. Careful: half a bridge hangs at the old angle, the real one is far from it.','Floor three. Small slabs, both paths strict on both axes. Watch the ragged chains of shadows straighten as the moons near the right place.']},
+{t:'Window into Shadow',g:'A dead end. But if a shadow matches the door on the wall, it becomes a passage',h:['Turn the moon until the dark slab’s shadow fills the glowing frame. Then a way opens in the dead end.']},
+{t:'Lock of Shadows',g:'Every door is a lock with slots. Assemble it from shadows: all the slots must light up at once. But not every set of pieces is the real one ✦',h:['Floor one. Move the moon: the dark bars — the shadows of the pieces — drift at different speeds. Bring each one into its own slot of the frame; when all three light up, the door opens.','Floor two. Four slots, and more pieces than needed: part of the set is false. If three of four are lit, it is a trap — look for another moon angle.','Floor three. Six slots and two false sets that almost fit together. The real angle is where all six light up. Watch the bars that run fastest.']},
+{t:'Night Mirror',g:'Two moons, two spirits and three focuses. The last dream is the most unsteady',h:['Bring the moons together. Scarlet spirit: near slabs (weak focus) up to the islet. Azure: middle slabs (medium focus). Then the scarlet one — far slabs (strong focus).']}];
+function setLang(l){LG=l;sS('lg',l);LV.forEach((L,i)=>Object.assign(L,(l=='en'?EN:RU)[i]));document.documentElement.lang=l;document.title=tr('ttl');rn=0;
+ $('lg').textContent=l.toUpperCase();$('lg').title=tr('lang');$('sd').title=tr('snd');$('pv').title=tr('prev');$('nx').title=tr('next');
+ $('fl').textContent='☀ '+tr('focus');$('hn').textContent='✦ '+tr('hint');$('rs').innerHTML='<span>↻</span> '+tr('reset');$('sv').textContent='☾ '+tr('solve');
+ $('l1').textContent=tr('music');$('l2').textContent=tr('fx');$('l3').textContent=tr('bright');if(typeof edL=='function')edL()}
+function setBr(v){BR=cl(v,.3,1);sS('br',BR);const e=document.documentElement.style;e.setProperty('--br',BR);e.setProperty('--fx',BR*BR);$('dm').style.opacity=(1-BR)*.9}
+const cn=[[-1,-1,-1],[1,-1,-1],[-1,1,-1],[1,1,-1],[-1,-1,1],[1,-1,1],[-1,1,1],[1,1,1]],_v=V(0,0,0);
+const hull=p=>{p.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]),f=l=>{const h=[];for(const q of l){while(h.length>1&&cr(h[h.length-2],h[h.length-1],q)<=0)h.pop();h.push(q)}h.pop();return h};return f(p).concat(f(p.slice().reverse()))};
+const off=(h,d)=>{const m=h.length;return h.map((v,i)=>{const a=h[(i+m-1)%m],b=h[(i+1)%m],e=[v[0]-a[0],v[1]-a[1]],f=[b[0]-v[0],b[1]-v[1]],l=Math.hypot(e[0],e[1])||1,j=Math.hypot(f[0],f[1])||1,n=[e[1]/l,-e[0]/l],o=[f[1]/j,-f[0]/j],k=d/Math.max(.35,1+n[0]*o[0]+n[1]*o[1]);return[v[0]+(n[0]+o[0])*k,v[1]+(n[1]+o[1])*k]})};
+const setP=(g,h,X)=>{const a=g.attributes.position;for(let i=0;i<8;i++){const q=h[Math.min(i,h.length-1)];a.setXYZ(i,q[0]+X,q[1],WZ+.02)}a.needsUpdate=true};
+/*ANIM*/
+// ——— смена этажей: старые плиты распадаются искрами, новые собираются волной от острова ———
+const bk=x=>1+2.70158*(x-1)**3+1.70158*(x-1)**2;
+function sAnim(L,m,k,act){const ex=L.P[k][8];if(ex==null){m.visible=true;return 1}
+ const u=m.userData,g=act?1:0;
+ if(u.a==null){u.a=g;u.tg=g;u.t0=0;u.sp=1}
+ if(u.tg!==g){u.tg=g;u.t0=tm+(L.lk?(k%8)*.08:L.w2?Math.abs(L.P[k][0]-(L.P[k][4]==2?L.w2:L.w).x)*(g?.05:.02):Math.abs(k-L.w.cp)*(g?.1:.04));u.sp=0}
+ if(tm>=u.t0){if(!u.sp){u.sp=1;slabFx(L,k,g)}u.a=cl(u.a+(g?DT*1.5:-DT*2.4),0,1)}
+ const e=u.a;m.visible=e>.01;m.scale.setScalar(Math.max(.001,g?bk(e):e*e*(3-2*e)));m.rotation.z=(1-e)*(k%2?1.5:-1.5);m.updateMatrixWorld(true);return e}
+function slabFx(L,k,on){const p=L.P[k],col=L.cc[Math.min(p[4]||1,L.cc.length)-1],cx=L.X+p[0],cy=p[1]+.3,hw=p[2]/2;
+ const r=spr(rng,col,1,.85,1,6);r.position.set(cx,cy,WZ+.35);pt.push({s:r,v:V(0,0,0),l:on?1.1:.8,gr:on?9:4});
+ for(let i=0;i<14;i++){const s=spr(Rn()<.35?stT:glow,col,.4+Rn()*.6,1,1,6),ox=(Rn()*2-1)*hw;
+  if(on){s.position.set(cx+ox*1.7,cy+1.4+Rn()*2.2,WZ+.4);pt.push({s,v:V(-ox*.7,-2.2-Rn()*1.5,0),l:1+Rn()*.5})}
+  else{s.position.set(cx+ox,cy+(Rn()-.4)*.6,WZ+.4);pt.push({s,v:V((Rn()*2-1)*1.2,3+Rn()*3.5,Rn()-.5),l:1.2+Rn()*.8})}}
+ const q=L.sl[k].position;for(let i=0;i<6;i++){const s=spr(glow,col,.7+Rn()*.8,.9,1,6);s.position.copy(q);const a=Rn()*6.283;pt.push({s,v:V(Math.cos(a)*2.5,Math.sin(a)*2.5+(on?0:2),Rn()*2-1),l:.9+Rn()*.5})}}
+function isleFx(L,i){const p=L.P[i],x=L.X+p[0],y=p[1]+.5;burst(x,y,WZ+.5,0xffd6f6);
+ [[26,1.4],[14,1]].forEach(([g,l])=>{const r=spr(rng,0xffe9ff,2,.7,1,6);r.position.set(x,y,WZ+.45);pt.push({s:r,v:V(0,0,0),l,gr:g})});
+ const b=spr(glow,0xffd6f6,1,.55,1,6);b.scale.set(3,16,1);b.position.set(x,y+5,WZ+.4);pt.push({s:b,v:V(0,0,0),l:1.3})}
+
+// тень = точная проекция плиты из центра луны на стену; по ней же ходит огонёк
+function shade(L){
+ const rr=[],fo=L.F?L.fo:1;
+ L.sl.forEach((m,k)=>{
+  const u=m.userData,Lp=u.li?L.m2.position:L.moon.position,p=[];let a=1e9,b=-1e9,c=-1e9,e=1e9;
+  for(const[x,y,z]of cn){_v.set(x*u.w/2,y*u.h/2,z*u.d/2);m.localToWorld(_v);const q=(WZ-Lp.z)/(_v.z-Lp.z),qx=Lp.x+(_v.x-Lp.x)*q-L.X,qy=Lp.y+(_v.y-Lp.y)*q;p.push([qx,qy]);a=Math.min(a,qx);b=Math.max(b,qx);c=Math.max(c,qy);e=Math.min(e,qy)}
+  const ty=L.P[k][4],ex=L.P[k][8],act=ex==null||ex==stage(L),ea=sAnim(L,m,k,act),fq=ty&&L.F?cl(1.7-Math.abs(fo-L.P[k][3])/(L.fw||.1),0,1):1,ok=fq>=.7&&act&&ea>.85,KK=1+(1-fq)*7;if(ex!=null||L.F&&ty)m.material.emissiveIntensity=(L.F&&ty?.06+.6*fq:.35)+4*ea*(1-ea)*1.6;rr.push(ty>2||!ok?{a:0,b:0,c:-99}:{a,b,c});if(ty==5)L.dsh[k]=[a,b,c,e];else if(ty>2){const m=L.pd.indexOf(k);L.pc[m]=ok&&Math.hypot((a+b)/2-L.po[m][0],(c+e)/2-L.po[m][1])<(L.pt||.7)}const h=hull(p);[0,.1,.22,.36].forEach((d,j)=>{setP(L.sh[k][j],d?off(h,d*KK):h,L.X);L.sh[k][j].mt.opacity=[.3,.22,.18,.14][j]*(.2+.8*fq)*ea;L.sh[k][j].ms.visible=ea>.01})});if(L.po)L.po.forEach((o,m)=>{const A=L.A,cc=i=>(rr[i].a+rr[i].b)/2,lc=A.filter(i=>cc(i)<o[0]),rc=A.filter(i=>cc(i)>o[0]),l=rr[lc[lc.length-1]],r=rr[rc[0]];L.bx[m]=[l.b,r.a,(l.c+r.c)/2];rr[L.pd[m]]=L.pc[m]?{a:l.b-.5,b:r.a+.5,c:L.bx[m][2]}:{a:0,b:0,c:-99}})
+ return rr}
+
+const bld=(L,i)=>{
+ const kk=L.k||1;L.dsh=[];const X=L.X=i*SP;L.th=L.S[0];L.ph=L.lock?L.T[0][1]:L.S[1];L.hint=0;L.auto=0;L.done=0;L.rw=0;L.mid=0;
+ L.A=L.P.map((p,j)=>p[4]===0?j:-1).filter(j=>j>=0);
+ const mp=L.mp=(a,b)=>V(X+RR*Math.sin(a)*Math.cos(b),3.5+RR*Math.sin(b),-3+RR*Math.cos(a)*Math.cos(b));
+ const wl=new THREE.Mesh(new THREE.PlaneGeometry(92,54),new THREE.MeshBasicMaterial({map:wT(L.col[0],L.col[1]),transparent:true,depthWrite:false}));wl.position.set(X,3.4,WZ);wl.renderOrder=1;sc.add(wl);
+ L.pool=spr(pooT,L.mc,46*kk,.2,1,2);L.pool2=spr(glow,0xffffff,16*kk,.09,1,2);
+ L.bm=[...Array(9)].map(()=>spr(glow,L.mc,1,.05,1,2));
+ L.moon=new THREE.Mesh(new THREE.SphereGeometry(1.25*kk,40,24),new THREE.MeshBasicMaterial({map:mnT,color:L.mc}));sc.add(L.moon);
+ L.h1=spr(glow,L.mc,10*kk,.75,1,7);L.h2=spr(glow,L.mc,28*kk,.2,1,7);L.h3=spr(rng,L.mc,4.6*kk,.3,1,7);
+ L.lt=new THREE.PointLight(L.mc,2,38,1.2);sc.add(L.lt);L.fo=L.F?.12:1;
+ if(L.tw){L.m2=new THREE.Mesh(new THREE.SphereGeometry(1.25*kk,40,24),new THREE.MeshBasicMaterial({map:mnT,color:L.mc2}));sc.add(L.m2);L.g2=spr(glow,L.mc2,10*kk,.75,1,7)}
+ if(L.lk)L.lk.forEach((o,m)=>{o.fr=spr(frT,0xcfe8ff,1,0,1,7);o.fr.scale.set(o.w/.65,o.h/.83,1);o.fr.position.set(X+o.x,o.y,WZ+.3);
+ o.sg=o.sl.map(s=>{const f=spr(frT,0xcfe8ff,1,0,1,7);f.scale.set(s[2]/.65,s[3]/.83,1);f.position.set(X+s[0],s[1],WZ+.3);const g=spr(glow,0x9fe8ff,1,0,1,7);g.scale.set(s[2]*2.4,s[3]*3,1);g.position.copy(f.position);return{f,g,v:0,on:0}});
+ o.pb=spr(glow,0xbff4ff,1,0,1,7);o.op=0;o.va=1;o.pw=0;o.ks=L.P.map((p,j)=>p[4]==5&&p[7]===m?j:-1).filter(j=>j>=0)});
+ if(L.po){L.pd=L.P.map((p,j)=>p[4]>2?j:-1).filter(j=>j>=0);L.pc=[];L.bx=[];L.op=[];L.fr=[];L.pf=[];L.pb=[];L.pw=[];L.po.forEach(o=>{const f=spr(frT,0xcfe8ff,1,.9,1,7);f.scale.set(o[2]/.65,o[3]/.83,1);f.position.set(X+o[0],o[1],WZ+.3);const h=spr(glow,0x9fe8ff,1,0,1,7);h.scale.set(o[2]*1.1,o[3]*1.1,1);h.position.copy(f.position);L.fr.push(f);L.pf.push(h);L.pb.push(spr(glow,0xbff4ff,1,0,1,7));L.op.push(0);L.pc.push(0);L.pw.push(0);L.bx.push([0,0,0])})}
+ if(L.lock){const a=[];for(let t=TH[0];t<=TH[1];t+=.04)a.push(mp(t,L.ph));const ar=new THREE.Line(new THREE.BufferGeometry().setFromPoints(a),new THREE.LineBasicMaterial({color:0xb8b0ff,transparent:true,opacity:.22,depthWrite:false}));ar.renderOrder=4;sc.add(ar)}
+ // плиты стоят параллельно стене — тень получается ровной горизонтальной полосой
+ L.sl=L.P.map(([wx,wy,w,t,k,hh=.55,gp,dc,ex,tx,td])=>{
+  const T=td!=null?L.TX[td]:L.T[tx!=null?tx:ex!=null?ex:L.T.length>1?(k>2?k-3:Math.max(0,k-1)):0],Lp=L.tw&&k==2?mp(-T[0],L.tw>1?.7-T[1]:T[1]):mp(T[0],T[1]),P=Lp.clone().lerp(V(X+wx,wy,WZ),t),col=k?L.cc[Math.min(k,L.cc.length)-1]:0xd9d4ff;
+  const g=new THREE.BoxGeometry(w*t,hh*t,L.dd||.3),m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:col,emissive:k?col:0x8a80ff,emissiveIntensity:.35,roughness:.5}));
+  m.position.copy(P);
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.6,depthWrite:false}));e.renderOrder=6;m.add(e);
+  m.userData={w:w*t,h:hh*t,d:L.dd||.3,li:L.tw&&k==2?1:0};sc.add(m);m.updateMatrixWorld(true);return m});
+ L.sh=L.sl.map((_,q)=>[0,1,2,3].map(j=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3));g.setIndex([0,1,2,0,2,3,0,3,4,0,4,5,0,5,6,0,6,7]);
+  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:L.tw&&L.P[q][4]?new THREE.Color(L.cc[L.P[q][4]-1]).multiplyScalar(.16):0x090532,transparent:true,opacity:[.3,.22,.18,.14][j],depthWrite:false,side:THREE.DoubleSide}));m.renderOrder=3;m.frustumCulled=false;sc.add(m);g.mt=m.material;g.ms=m;return g}));
+ const s0=L.P[0],g=L.P[L.P.length-1];
+ L.w={x:s0[0],y:s0[1]+.9*kk,cp:0,fade:1,lost:0,tr:[]};
+ L.wc=spr(glow,0xffffff,1.3*kk,1);L.wh=spr(glow,0x9fe8ff,4.4*kk,.7);
+ for(let j=0;j<10;j++){const s=spr(glow,0x9fe8ff,(1.1-j*.08)*kk,.5-j*.045);s.position.set(X+s0[0],s0[1]+.9*kk,WZ+.4);L.w.tr.push(s)}
+ L.gs=spr(stT,0xffc8f4,3*kk,.95);L.gs2=spr(rng,0xffc8f4,2.4*kk,.8);[L.gs,L.gs2].forEach(s=>s.position.set(X+g[0],g[1]+1.9*kk,WZ+.35));
+ L.gh=spr(rng,0xffffff,3.4,0,1,7);
+ if(L.dual){L.sub=[1,2].map(l=>{const I=L.P.map((_,j)=>j).filter(j=>(L.P[j][4]||L.P[j][6]||1)==l),P=I.map(j=>L.P[j]);return{I,P,A:P.map((p,j)=>p[4]===0?j:-1).filter(j=>j>=0),T:[0],X,up:L,mid:-1,done:0,gc:l>1?0x9fd0ff:0xff9fb4}});
+  const q=L.sub[1],s2=q.P[0],g2=q.P[q.P.length-1],RC=0xff9fb4,BC=0x9fd0ff;L.sub[0].w=L.w;L.w2=q.w={x:s2[0],y:s2[1]+.9,cp:0,fade:1,lost:0,tr:[]};
+  L.wh.material.color.setHex(RC);L.w.tr.forEach(t=>t.material.color.setHex(RC));L.gs.material.color.setHex(RC);L.gs2.material.color.setHex(RC);
+  L.c2=spr(glow,0xffffff,1.3,1);L.h2w=spr(glow,BC,4.4,.7);for(let j=0;j<10;j++){const t=spr(glow,BC,1.1-j*.08,.5-j*.045);t.position.set(X+s2[0],s2[1]+.9,WZ+.4);L.w2.tr.push(t)}
+  L.gt=spr(stT,BC,3,.95);L.gt2=spr(rng,BC,2.4,.8);[L.gt,L.gt2].forEach(t=>t.position.set(X+g2[0],g2[1]+1.9,WZ+.35))}
+ const p=mp(L.th,L.ph);[L.moon,L.lt].forEach(o=>o.position.copy(p));if(L.tw){L.m2.position.copy(mp(-L.th,L.tw>1?.7-L.ph:L.ph));L.g2.position.copy(L.m2.position)}shade(L);
+};LV.forEach(bld);
+
+/* ——— замок из теней: ячейка горит, когда в неё легла тень детали; дверь открыта, когда горят все ячейки разом ——— */
+function lockUpd(L,dt,R){
+ const st=stage(L),kk=L.k||1,pt=L.pt||.22;
+ L.lk.forEach((o,m)=>{
+  const act=o.ex==null||o.ex==st,nS=o.sl.length;o.va+=((act?1:0)-o.va)*Math.min(1,dt*(act?2.5:6));
+  const cen=o.ks.map(k=>{const d=L.dsh[k],u=L.sl[k].userData;return d&&act&&(u.a==null||u.a>.85)?[(d[0]+d[1])/2,(d[2]+d[3])/2]:null}),lit=cen.map(()=>0);
+  let n=0;
+  o.sl.forEach((s,i)=>{const g=o.sg[i],r=g.on?pt*1.3:pt;let h=-1;cen.forEach((c,q)=>{if(c&&Math.hypot(c[0]-s[0],c[1]-s[1])<r)h=q});
+   const on=h>=0;if(on&&!g.on&&dt>0)bl(SL[cur][Math.min(6,n)]+12,.03,.5);
+   g.on=on;g.v+=((on?1:0)-g.v)*Math.min(1,dt*10);if(on){n++;lit[h]=1}
+   g.f.material.opacity=(.3+.6*g.v)*o.va;g.g.material.opacity=.8*g.v*o.va});
+  const open=n==nS;o.op+=((open?1:0)-o.op)*Math.min(1,dt*4);o.fr.material.opacity=(.2+.3*n/nS+.5*o.op)*o.va;
+  o.ks.forEach((k,q)=>L.sh[k].forEach(g=>g.mt.color.setHex(lit[q]?0x9fe8ff:0x090532)));
+  const l=R[o.a],r=R[o.b];o.pb.position.set(L.X+(l.b+r.a)/2,(l.c+r.c)/2+.3*kk,WZ+.3);o.pb.scale.set(Math.max(.1,r.a-l.b+.8)*o.op,.8*kk,1);o.pb.material.opacity=o.op*.85;
+  if(open){R[o.ks[0]]={a:l.b-.3,b:r.a+.3,c:(l.c+r.c)/2};if(!o.pw){o.pw=1;sHn();say(tr('door'),3)}}else o.pw=0})}
+function stage(L){return L.T.length>1?Math.min(L.T.length-1,L.sub?Math.min(...L.sub.map(q=>q.A.filter(i=>i<=q.w.cp).length-1)):L.A.filter(i=>i<=L.w.cp).length-1):0}
+function say(t,d=6){const e=$('ms');e.textContent=t;e.classList.add('on');clearTimeout(mt);mt=setTimeout(()=>e.classList.remove('on'),d*1000)}
+const rip=()=>{const d=document.createElement('div');d.className='rp';document.body.appendChild(d);setTimeout(()=>d.remove(),1700);cv.style.animation='none';cv.offsetWidth;cv.style.animation='dz 1.2s'};
+function win(L){L.done=1;const g=L.P[L.P.length-1],u=L.up;burst(L.X+g[0],g[1]+1.9,WZ+.5,u?L.gc:0xffc8f4);if(u){sHn();if(!u.sub.every(q=>q.done)){say(tr('one'),5);return}u.done=1}(u||L).auto=0;rip();sWn();ui();say(tr(cur<LV.length-1?'solved':'wake'),9)}
+function reset(){const L=LV[cur],W=L.w,s=L.P[0];burst(L.X+W.x,W.y,WZ+.5,0x9fe8ff);L.done=0;L.auto=0;L.rw=1;L.hint=0;L.mid=0;L.fo=L.F?.12:1;if(L.sub)L.sub.forEach(q=>{q.done=0;q.mid=-1;const V2=q.w,s2=q.P[0];V2.cp=0;V2.x=s2[0];V2.y=s2[1]+.9;V2.lost=0;V2.fade=0;V2.tr.forEach(t=>t.position.set(L.X+V2.x,V2.y,WZ+.4))});W.cp=0;W.ft=null;W.id=0;W.x=s[0];W.y=s[1]+.9;W.lost=0;W.fade=0;W.tr.forEach(t=>t.position.set(L.X+W.x,W.y,WZ+.4));rip();sRs();ui();ttl();say(tr('again'),4)}
+// огонёк идёт от островка к островку, когда тени между ними складываются в мост
+function walk(L,dt,R){
+ const U=L.up||L,W=L.w,n=R.length,c0=i=>(R[i].a+R[i].b)/2,sm=U.sm||.6,gp=U.gp||.9,vt=U.vt||2.2,kk=U.k||1;let s=-1,b=-9;
+ R.forEach((r,i)=>{if(W.x>r.a-sm&&W.x<r.b+sm&&Math.abs(W.y-r.c-.55*kk)<2.4*kk&&r.c>b){s=i;b=r.c}});
+ if(s<0){W.lost+=dt;W.y-=dt*.5;if(W.lost>1.4){W.fade=Math.max(0,W.fade-dt*3);if(W.fade<=0){W.x=c0(W.cp);W.y=R[W.cp].c+.55*kk;W.lost=0;W.tr.forEach(t=>t.position.set(L.X+W.x,W.y,WZ+.4));sFl()}}return}
+ W.lost=0;W.fade=Math.min(1,W.fade+dt*2);
+ if(L.P[s][4]===0)W.cp=Math.max(W.cp,s);
+ if(U.T.length>1&&W.cp>0&&W.cp<n-1&&L.mid!==W.cp){L.mid=W.cp;const c=L.A.filter(i=>i<=W.cp).length;say(tr(U.sub&&U.sub.some(q=>q!==L&&q.A.filter(i=>i<=q.w.cp).length<c)?'one':'isle'),8);sHn();isleFx(L,W.cp);gl(300,1600,1.1,.04)}
+ const na=L.A.find(i=>i>W.cp);let v=-1;
+ if(na===undefined)v=n-1;
+ else{const par=Array(n).fill(-2),q=[s];par[s]=-1;
+  for(let k=0;k<q.length;k++){const u=q[k];for(let j=0;j<n;j++)if(par[j]==-2&&Math.max(R[u].a,R[j].a)-Math.min(R[u].b,R[j].b)<gp&&Math.abs(R[u].c-R[j].c)<vt){par[j]=u;q.push(j)}}
+  if(L.pw){/* режим «езды»: огонёк идёт к самой дальней резкой плите, достижимой сейчас */let g=s;for(let j=0;j<n;j++)if(par[j]!=-2&&!L.P[j][7]&&j>g)g=j;if(g!=s){v=g;while(par[v]!=s)v=par[v]}}
+  else if(par[na]!=-2&&na!=s){v=na;while(par[v]!=s)v=par[v]}}
+ const tx=v>=0?c0(v):L.P[s][4]===0||L.pw?c0(s):W.x,d=tx-W.x,m=Math.min(Math.abs(d),dt*(U.sp||3.4));
+ if(L.pw){const n1=L.P[s+1];if(Math.abs(W.x-c0(s))<.5)W.ft=n1&&n1[4]?(L.P[s][4]?(L.P[s][3]+n1[3])/2:n1[3]):L.P[s][4]?L.P[s][3]:W.ft;
+  W.id=m>0||L.done?0:(W.id||0)+dt;if(W.id>10){W.id=0;say(L.h[Math.min(stage(L),L.h.length-1)],7)}}
+ W.x+=Math.sign(d)*m;if(m>0&&(W.st=(W.st||0)+dt)>.32){W.st=0;sSt()}
+ if(v>=0&&Math.abs(W.x-tx)<.3&&L.P[v][4]===0){W.cp=Math.max(W.cp,v);if(v===n-1&&!L.done)win(L)}
+ W.y+=(R[s].c+.55*kk-W.y)*Math.min(1,dt*9)}
+function ui(){const L=LV[cur];$('fw').style.display=L.F?'flex':'none';$('fc').value=L.fo*100;
+ [['pv',cur-1],['nx',cur+1]].forEach(([id,j])=>{const b=$(id),o=LV[j];b.style.opacity=o?1:0;b.style.pointerEvents=o?'auto':'none';b.querySelector('i').textContent=o?o.n:''});
+ $('nx').classList.toggle('pl',!!L.done&&cur<LV.length-1);
+ [...$('dt').children].forEach((d,i)=>d.className=i==cur?'a':LV[i].done?'d':'')}
+function ttl(){const L=LV[cur],t=$('ti');t.innerHTML='<b>'+tr('dream')+' '+L.n+'</b><h1>'+L.t+'</h1>';t.style.animation='none';t.offsetWidth;t.style.animation='fi 5.5s forwards'}
+function go(i){if(!LV[i]||i==cur)return;wh(i>cur);cur=i;KS=LV[i].k||1;LV[i].auto=0;pth=LV[i].th;pph=LV[i].ph;ui();ttl();say(LV[i].g,7);if(ac)pad()}
+
+/* ——— звук: всё синтезируется на лету, у музыки и эффектов свои регуляторы ——— */
+const l0=(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:+v}catch(e){return d}},sS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+let ac,Gm,Gf,rv,nb,vo,pi=0,VM=l0('vm',.7),VX=l0('vx',.8);
+const mf=n=>440*2**((n-69)/12);
+const CH=[[[36,55,59,64],[33,52,55,60],[41,57,60,64],[43,55,59,62]],[[33,52,57,64],[41,53,57,60],[36,55,60,64],[40,52,59,62]],[[38,50,57,64],[34,53,58,62],[41,48,57,60],[43,50,55,62]]],
+SL=[[72,74,76,79,81,84,86],[69,72,74,76,79,81,84],[62,65,67,69,72,74,77]];CH.push(CH[1],CH[2],CH[0],CH[2],CH[1],CH[0],CH[2]);SL.push(SL[1],SL[2],SL[0],SL[2],SL[1],SL[0],SL[2]);for(let i=10;i<24;i++){CH.push(CH[i%3]);SL.push(SL[i%3])}
+const bus=(x,c)=>x.connect(c?Gf:Gm),setV=()=>{if(!ac)return;const t=ac.currentTime;Gm.gain.setTargetAtTime(VM*VM*1.2,t,.1);Gf.gain.setTargetAtTime(VX*VX*1.2,t,.1)};
+function tn(f,d,g,c=1,ty='sine',dl=0,pn=0){if(!ac||!(c?VX:VM))return;const t=ac.currentTime+dl,o=ac.createOscillator(),e=ac.createGain();let x=e;o.type=ty;o.frequency.value=f;e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(g,t+.012);e.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(e);if(pn&&ac.createStereoPanner){x=ac.createStereoPanner();x.pan.value=pn;e.connect(x)}bus(x,c);o.start(t);o.stop(t+d+.05)}
+const bl=(m,g,dl=0,p=0,c=1)=>{const f=mf(m);tn(f,3,g,c,'sine',dl,p);tn(f*2.01,1.8,g*.3,c,'sine',dl,p);tn(f*4.02,.7,g*.1,c,'sine',dl,p)};
+function gl(a,b,d,g,ty='sine',dl=0){if(!ac||!VX)return;const t=ac.currentTime+dl,o=ac.createOscillator(),e=ac.createGain();o.type=ty;o.frequency.setValueAtTime(a,t);o.frequency.exponentialRampToValueAtTime(b,t+d);e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(g,t+d*.3);e.gain.linearRampToValueAtTime(0,t+d);o.connect(e);bus(e,1);o.start(t);o.stop(t+d+.05)}
+function wh(up){if(!ac||!VX)return;const t=ac.currentTime,s=ac.createBufferSource(),f=ac.createBiquadFilter(),e=ac.createGain();s.buffer=nb;f.type='bandpass';f.Q.value=1.2;f.frequency.setValueAtTime(up?300:1800,t);f.frequency.exponentialRampToValueAtTime(up?1800:300,t+1.2);e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(.16,t+.5);e.gain.linearRampToValueAtTime(0,t+1.3);s.connect(f);f.connect(e);bus(e,1);s.start(t);s.stop(t+1.4)}
+function pad(){if(!ac||!VM)return;const ch=CH[cur][pi++%4],t=ac.currentTime;ch.forEach((m,i)=>[0,1].forEach(k=>{const o=ac.createOscillator(),e=ac.createGain(),f=ac.createBiquadFilter();o.type=k?'triangle':'sine';o.frequency.value=mf(m);o.detune.value=(k?7:-7)+i*2;f.type='lowpass';f.frequency.value=650+i*140;e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(i?.04:.07,t+3);e.gain.linearRampToValueAtTime(0,t+9);o.connect(f);f.connect(e);bus(e,0);o.start(t);o.stop(t+9.2)}))}
+function aInit(){if(ac){ac.resume();return}
+ ac=new(window.AudioContext||window.webkitAudioContext)();const mg=ac.createGain(),cp=ac.createDynamicsCompressor();mg.connect(cp);cp.connect(ac.destination);
+ rv=ac.createConvolver();const n=ac.sampleRate*3,b=ac.createBuffer(2,n,ac.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Rn()*2-1)*Math.pow(1-i/n,2.4)}rv.buffer=b;const rg=ac.createGain();rg.gain.value=.9;rv.connect(rg);rg.connect(mg);
+ Gm=ac.createGain();Gf=ac.createGain();Gm.gain.value=VM*VM*1.2;Gf.gain.value=VX*VX*1.2;[Gm,Gf].forEach(g=>{g.connect(mg);const s=ac.createGain();s.gain.value=.5;g.connect(s);s.connect(rv)});
+ nb=ac.createBuffer(1,ac.sampleRate*1.5,ac.sampleRate);const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Rn()*2-1;
+ vo=[0,1].map(k=>{const o=ac.createOscillator(),g=ac.createGain();o.type=k?'sine':'triangle';g.gain.value=0;o.connect(g);bus(g,1);o.start();return{o,g}});
+ pad();setInterval(pad,7500);setInterval(()=>{if(VM&&Rn()<.65)bl(SL[cur][Rn()*7|0]+(Rn()<.4?12:0),.045,0,Rn()*1.6-.8,0)},1700)}
+const sTk=()=>tn(1500,.08,.04,1,'triangle'),sSt=()=>tn(mf(SL[cur][Rn()*7|0]+12),.5,.028,1,'sine',0,Rn()-.5),sFl=()=>gl(700,180,.7,.05,'triangle'),
+ sWn=()=>{SL[cur].forEach((m,i)=>bl(m+12,.08,i*.12,i%2?.4:-.4));gl(1800,4000,.6,.02,'sine',.9)},
+ sHn=()=>{bl(SL[cur][4]+12,.07);bl(SL[cur][6]+12,.06,.15)},sSv=()=>gl(220,990,1.4,.06),sRs=()=>{wh(0);gl(900,200,.9,.06);bl(SL[cur][0]+12,.07,.9)};
+
+LV.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);$('dt').appendChild(d)});
+$('pv').onclick=()=>go(cur-1);$('nx').onclick=()=>go(cur+1);
+$('hn').onclick=()=>{const L=LV[cur];L.hint=8;say(L.h[Math.min(stage(L),L.h.length-1)],8);sHn()};
+$('sv').onclick=()=>{const L=LV[cur];L.rw=0;L.auto=1;L.hint=3;say(tr('auto'),4);sSv()};
+$('rs').onclick=()=>{$('rs').querySelector('span').style.transform='rotate('+(-360*++rn)+'deg)';reset()};
+$('vm').value=VM*100;$('vx').value=VX*100;
+const vs=()=>$('sd').classList.toggle('m',!VM&&!VX);vs();
+$('vm').oninput=e=>{VM=e.target.value/100;sS('vm',VM);setV();vs()};
+$('vx').oninput=e=>{VX=e.target.value/100;sS('vx',VX);setV();vs()};$('vx').onchange=sTk;$('vb').value=BR*100;$('vb').oninput=e=>setBr(e.target.value/100);$('lg').onclick=()=>{setLang(LG=='ru'?'en':'ru');ttl();say(LV[cur].g,6)};
+$('sd').onclick=()=>$('sp').classList.toggle('o');$('fc').oninput=e=>{const L=LV[cur];L.fo=e.target.value/100;L.auto=0};
+document.querySelectorAll('button').forEach(b=>b.addEventListener('click',sTk));
+document.addEventListener('pointerdown',aInit,{once:true});addEventListener('keydown',aInit,{once:true});
+
+const mv=(L,dx,dy)=>{L.auto=0;L.rw=0;L.th=cl(L.th+dx,TH[0],TH[1]);if(!L.lock)L.ph=cl(L.ph+dy,PH[0],PH[1])};
+cv.onpointerdown=e=>{dr=1;px=e.clientX;py=e.clientY;cv.setPointerCapture(e.pointerId);$('ms').classList.remove('on');$('sp').classList.remove('o')};
+cv.onpointermove=e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;if(!dr)return;mv(LV[cur],(e.clientX-px)*.0035,-(e.clientY-py)*.0025);px=e.clientX;py=e.clientY};
+cv.onpointerup=cv.onpointercancel=()=>dr=0;
+addEventListener('keydown',e=>{const k=e.key,L=LV[cur];if(k=='ArrowLeft')mv(L,-.04,0);else if(k=='ArrowRight')mv(L,.04,0);else if(k=='ArrowUp')mv(L,0,.03);else if(k=='ArrowDown')mv(L,0,-.03)});
+function rs(){const w=innerWidth,h=innerHeight;rd.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();camD=Math.min(80,34*Math.max(1,1.5/cam.aspect))}
+addEventListener('resize',rs);rs();
+
+function frame(now){
+ const dt=Math.min(.05,(now-last)/1000)||.016;last=now;tm+=dt;DT=dt;
+ const L=LV[cur],tx=cur*SP,pc=cx,k=Math.min(1,dt*2.2);cx+=(tx-cx)*(1-Math.exp(-dt*2.2));const vx=(cx-pc)/dt;zD+=(Math.max(1,(L.hw||0)/(camD*.3249*cam.aspect))-zD)*(1-Math.exp(-dt*2));
+ cam.position.set(cx+mx*1.8,4.6-my*.9+Math.sin(tm*.5)*.12,WZ+camD*zD);cam.lookAt(cx+(tx-cx)*.2+mx*.6,3.2,WZ);cam.rotation.z=cl(-vx*.004,-.1,.1);
+ const fv=36+Math.min(7,Math.abs(vx)*.05);if(Math.abs(fv-cam.fov)>.02){cam.fov=fv;cam.updateProjectionMatrix()}
+ if(L.auto){const T=L.T[stage(L)];if(L.F){const fi=L.sub?(L.sub[1].done?2:L.sub[0].w.cp>0?1:0):L.A.filter(i=>i<=L.w.cp).length-1;L.fo+=L.pw?Math.max(-.35*dt,Math.min(.35*dt,(L.w.ft==null?L.fo:L.w.ft)-L.fo)):(L.ft[Math.min(L.ft.length-1,fi)]-L.fo)*k;$('fc').value=L.fo*100}L.th+=(T[0]-L.th)*k;if(!L.lock)L.ph+=(T[1]-L.ph)*k}
+ if(L.rw){L.th+=(L.S[0]-L.th)*k*1.4;if(!L.lock)L.ph+=(L.S[1]-L.ph)*k*1.4;if(Math.abs(L.th-L.S[0])<.01)L.rw=0}
+ // мягкое притяжение: отпустил луну рядом с верным углом — она сама плавно встаёт на место
+ const T0=L.T[stage(L)],d0=Math.hypot(L.th-T0[0],(L.ph-T0[1])*1.3);
+ if(!dr&&!L.auto&&!L.rw&&d0<(Array.isArray(L.mg)?L.mg[Math.min(L.mg.length-1,stage(L))]:L.mg||.16)){const m=Math.min(1,dt*1.4);L.th+=(T0[0]-L.th)*m;if(!L.lock)L.ph+=(T0[1]-L.ph)*m}
+ LV.forEach((M,i)=>{
+  const p=M.mp(M.th,M.ph),T=M.T[stage(M)],d=Math.hypot(M.th-T[0],(M.ph-T[1])*1.3),W=M.w,wp=V(M.X+W.x,W.y+Math.sin(tm*3+i)*.08*(M.k||1),WZ+.4);M.hint=Math.max(0,M.hint-dt);
+  [M.moon,M.h1,M.h2,M.h3,M.lt].forEach(o=>o.position.copy(p));M.moon.rotation.y+=dt*.05;
+  if(M.tw){const q=M.mp(-M.th,M.tw>1?.7-M.ph:M.ph);M.m2.position.copy(q);M.g2.position.copy(q);M.m2.rotation.y-=dt*.05;M.g2.scale.setScalar((10+Math.sin(tm*1.4+i)*.5)*(M.k||1))}
+  if(M.po)M.po.forEach((_,m)=>{M.op[m]+=((M.pc[m]?1:0)-M.op[m])*Math.min(1,dt*4);const o=M.op[m],B=M.bx[m];M.pf[m].material.opacity=o*(.7+.2*Math.sin(tm*5));M.fr[m].material.opacity=.4+o*.6;M.pb[m].position.set(M.X+(B[0]+B[1])/2,B[2]+.6,WZ+.3);M.pb[m].scale.set(Math.max(.1,B[1]-B[0]+1.4)*o,1.3,1);M.pb[m].material.opacity=o*.85;if(M.pc[m]&&!M.pw[m]&&i==cur){M.pw[m]=1;sHn();say(tr('door'),3)}if(!M.pc[m])M.pw[m]=0})
+  M.pool.position.set(p.x,1.5+(p.y-7)*.8,WZ+.01);M.pool2.position.set(p.x,.5+(p.y-7)*.8,WZ+.01);
+  M.bm.forEach((s,j)=>{const u=j/8;s.position.set(p.x+((p.x+M.X)/2-p.x)*u,p.y+(2-p.y)*u,p.z+(WZ+.3-p.z)*u);s.scale.setScalar((3+u*u*30)*(M.k||1));s.material.opacity=.06*(1-u*.6)});
+  M.h1.scale.setScalar(10+Math.max(0,1-d/.35)*6+Math.sin(tm*1.4+i)*.5+(M.F?(1-M.fo)*9:0));M.h3.scale.setScalar(4.6+Math.sin(tm*2+i)*.25);M.h1.scale.multiplyScalar(M.k||1);M.h3.scale.multiplyScalar(M.k||1);
+  M.gh.material.opacity=M.hint>0?.55+.35*Math.sin(tm*4):0;M.gh.position.copy(M.mp(T[0],T[1]));M.gh.scale.setScalar((3.4+Math.sin(tm*3)*.3)*(M.k||1));
+  M.wc.position.copy(wp);M.wh.position.copy(wp);M.wc.material.opacity=W.fade;M.wh.material.opacity=.7*W.fade;
+  let q=wp;W.tr.forEach(s=>{s.position.lerp(q,Math.min(1,dt*12));q=s.position});
+  const f=(tm*.6+i*.3)%1;M.gs.scale.setScalar((3+Math.sin(tm*2.4)*.5+(M.done?1.2:0))*(M.k||1));M.gs.material.rotation+=dt*.5;M.gs2.scale.setScalar((2+f*3)*(M.k||1));M.gs2.material.opacity=.8*(1-f);
+  if(M.w2){const W2=M.w2,q2=V(M.X+W2.x,W2.y+Math.sin(tm*3+i+2)*.08,WZ+.4),f2=(f+.5)%1;M.c2.position.copy(q2);M.h2w.position.copy(q2);M.c2.material.opacity=W2.fade;M.h2w.material.opacity=.7*W2.fade;let qq=q2;W2.tr.forEach(t=>{t.position.lerp(qq,Math.min(1,dt*12));qq=t.position});M.gt.scale.setScalar(3+Math.sin(tm*2.4+1)*.5+(M.sub[1].done?1.2:0));M.gt.material.rotation+=dt*.5;M.gt2.scale.setScalar(2+f2*3);M.gt2.material.opacity=.8*(1-f2)}});
+ {const R=shade(L);if(L.lk)lockUpd(L,dt,R);L.sub?L.sub.forEach(s=>walk(s,dt,s.I.map(i=>R[i]))):walk(L,dt,R)}
+ for(let j=pt.length-1;j>=0;j--){const p=pt[j];if(!p.ks){p.ks=1;if(KS!=1){p.s.scale.multiplyScalar(KS);p.v.multiplyScalar(KS);if(p.gr)p.gr*=KS}}p.l-=dt;p.s.position.addScaledVector(p.v,dt);p.v.multiplyScalar(1-dt*1.5);p.v.y-=dt*2;if(p.gr)p.s.scale.addScalar(p.gr*dt);p.s.material.opacity=cl(p.l,0,1)*BR;if(p.l<=0){sc.remove(p.s);p.s.material.dispose();pt.splice(j,1)}}
+ cds.forEach(c=>{c.position.x+=c.userData.v*dt;if(c.position.x>860)c.position.x=-40});
+ for(let j=0;j<DN;j++){dp[j*3]+=Math.sin(tm*.4+dv[j])*.4*dt;dp[j*3+1]+=(.2+.15*Math.sin(dv[j]*3))*dt;if(dp[j*3+1]>12)dp[j*3+1]=-4}dust.geometry.attributes.position.needsUpdate=true;
+ stars.material.opacity=.7+.25*Math.sin(tm*.8);
+ sn-=dt;if(sn<0&&!sv){sn=7+Rn()*8;sv={x:cx+(Rn()-.2)*40,y:16+Rn()*5,l:1};ss.material.rotation=.38}
+ if(sv){sv.x-=28*dt;sv.y-=11*dt;sv.l-=dt*1.1;ss.position.set(sv.x,sv.y,-45);ss.material.opacity=Math.max(0,Math.sin(sv.l*3.14))*.9;if(sv.l<=0){sv=null;ss.material.opacity=0}}
+ if(ac&&vo){const sp=(Math.abs(L.th-pth)+Math.abs(L.ph-pph))/dt,w=Math.max(0,1-d0/.35),t=ac.currentTime,i=cl(Math.round((L.th-TH[0])/(TH[1]-TH[0])*13),0,13),f=mf(SL[cur][i%7]-12+(i>6?12:0));pth=L.th;pph=L.ph;
+  vo[0].o.frequency.setTargetAtTime(f,t,.06);vo[0].g.gain.setTargetAtTime(Math.min(.05,sp*.1),t,.12);vo[1].o.frequency.setTargetAtTime(f*1.5,t,.1);vo[1].g.gain.setTargetAtTime(w*.04,t,.2)}
+ rd.render(sc,cam);requestAnimationFrame(frame)}
+/* ——— редактор: свой сон ——— */
+Object.assign(ST.ru,{ce:'✎ Свой уровень',e_h:'✎ Свой сон',e_isl:'◯ Остров',e_slab:'▬ Плита',e_frm:'▢ Рамка',e_w:'ширина',e_w1:'↔ Шире',e_w0:'↔ Уже',e_d1:'⇅ Дальше',e_d0:'⇅ Ближе',e_m:'◐ Другая луна',e_del:'✕ Убрать',e_all:'🗑 Всё',e_fo:'фокус',e_dp:'глубина',e_tap:'Тапни по полю — добавится «%». Зелёная нить — путь цел, красная — разрыв.',e_2m:'Две луны',e_moon:'Луна',yes:'да',no:'нет',e_play:'▶ Играть',e_close:'✕ Закрыть',e_c1:'Слева и справа нужны острова — старт и финиш',e_c2:'Рамка должна стоять между двумя островами',e_c3:'Красная нить — разрыв: придвинь плиты (зазор меньше 0.9, перепад высот меньше 2)',e_c4:'С фокусом соседние плиты должны различаться по глубине не больше чем на 0.2',e_nm:'Мой сон',e_g:'Сон, который ты придумал сам ✦',e_h1:'Двигай луну: тени сложатся в тропу при верном угле. «Подсказка» покажет, где он.'});
+Object.assign(ST.en,{ce:'✎ My level',e_h:'✎ My dream',e_isl:'◯ Islet',e_slab:'▬ Slab',e_frm:'▢ Frame',e_w:'width',e_w1:'↔ Wider',e_w0:'↔ Narrower',e_d1:'⇅ Farther',e_d0:'⇅ Closer',e_m:'◐ Other moon',e_del:'✕ Delete',e_all:'🗑 Clear',e_fo:'focus',e_dp:'depth',e_tap:'Tap the field to add “%”. A green thread means the path holds, red means a gap.',e_2m:'Two moons',e_moon:'Moon',yes:'yes',no:'no',e_play:'▶ Play',e_close:'✕ Close',e_c1:'You need islets at both ends — start and finish',e_c2:'A frame must stand between two islets',e_c3:'Red thread — a gap: move the slabs closer (gap under 0.9, height step under 2)',e_c4:'With focus, neighbouring slabs may differ in depth by at most 0.2',e_nm:'My dream',e_g:'A dream you made yourself ✦',e_h1:'Move the moon: the shadows form a path at the right angle. “Hint” shows where it is.'});
+
+let E;try{E=JSON.parse(localStorage.getItem('tl'))}catch(e){}
+if(!E||!E.p)E={f:0,w:0,a:.5,b:.32,p:[[0,-8.4,0,3.2,.97,1,0],[1,-4.6,.4,4.4,.5,1,0],[1,-.2,.9,4.4,.7,1,0],[1,4.2,1.4,4.4,.58,1,0],[0,8,1.9,3.2,.97,1,0]]};
+const ecv=$('ec'),x2=ecv.getContext('2d');let EW=1,EH=1,EU=1,sel=-1,tl=1,drg=0,ci=-1;
+const sx=x=>EW/2+x*EU,sy=y=>EH/2-(y-2.8)*EU,ux=x=>(x-EW/2)/EU,uy=y=>2.8-(y-EH/2)/EU,q4=v=>Math.round(v*4)/4,
+ sv2=()=>{try{localStorage.setItem('tl',JSON.stringify(E))}catch(e){}},
+ lk=(a,b)=>Math.abs(a[1]-b[1])-(a[3]+b[3])/2<.9&&Math.abs(a[2]-b[2])<2.2,
+ srt=()=>E.p.slice().sort((a,b)=>a[1]-b[1]),
+ hit=(x,y)=>{for(let i=E.p.length-1;i>=0;i--){const p=E.p[i];if(Math.abs(x-p[1])<p[3]/2&&Math.abs(y-p[2])<(p[0]==3?1.7:.5))return i}return-1};
+function dw(){
+ x2.clearRect(0,0,EW,EH);x2.lineWidth=1;x2.strokeStyle='rgba(200,190,255,.1)';
+ for(let x=-10;x<=10;x+=2){x2.beginPath();x2.moveTo(sx(x),sy(-2));x2.lineTo(sx(x),sy(7.6));x2.stroke()}
+ for(let y=-2;y<=7;y++){x2.beginPath();x2.moveTo(sx(-11),sy(y));x2.lineTo(sx(11),sy(y));x2.stroke()}
+ const o=srt();x2.lineWidth=3;
+ for(let i=0;i<o.length-1;i++){const a=o[i],b=o[i+1];if(a[0]==3||b[0]==3)continue;x2.strokeStyle=lk(a,b)?'#9fffc8':'#ff7a9a';x2.beginPath();x2.moveTo(sx(a[1]),sy(a[2]));x2.lineTo(sx(b[1]),sy(b[2]));x2.stroke()}
+ x2.font='15px Georgia';x2.textAlign='center';
+ E.p.forEach((p,i)=>{const[k,x,y,w,t,m,s]=p,h=k==3?3.4:.55,c=k==0?'#d9d4ff':k==3?'#9fe8ff':E.w&&m==2?'#ff9fd2':'#c0a8ff';
+  x2.fillStyle=c+(k==3?'22':'bb');x2.strokeStyle=i==sel?'#fff':c;x2.lineWidth=i==sel?3:1.5;x2.setLineDash(s==2?[5,4]:[]);
+  x2.fillRect(sx(x-w/2),sy(y+h/2),w*EU,h*EU);x2.strokeRect(sx(x-w/2),sy(y+h/2),w*EU,h*EU);
+  x2.fillStyle='#fff';x2.fillText(k?(s==1?'↔ ':s==2?'✦ ':'')+t.toFixed(2):'',sx(x),sy(y+h/2)-6)});
+ x2.setLineDash([])}
+function upd(){const p=E.p[sel],K=['e_isl','e_slab','','e_frm'];
+ $('ei').textContent=p?tr(K[p[0]]).slice(2)+' · '+tr('e_w')+' '+p[3].toFixed(1)+(p[0]?' · '+tr(E.f?'e_fo':'e_dp')+' '+p[4].toFixed(2):''):tr('e_tap').replace('%',tr(K[tl]).slice(2).toLowerCase());
+ $('ef').textContent='☀ '+tr('focus')+': '+tr(E.f?'yes':'no');$('ew').textContent='☾ '+tr('e_2m')+': '+tr(E.w?'yes':'no');
+ $('e1').value=E.a*100;$('e2').value=E.b*100;dw()}
+function rsE(){const r=ecv.getBoundingClientRect(),d=devicePixelRatio||1;EW=r.width;EH=r.height;ecv.width=EW*d;ecv.height=EH*d;x2.setTransform(d,0,0,d,0,0);EU=Math.min(EW/22,EH/10.4);upd()}
+const EBn=$('eb'),mkb=(k,f,id)=>{const b=document.createElement('button');b.dataset.k=k;if(id)b.id=id;b.onclick=()=>{f();sv2();upd()};b.addEventListener('click',sTk);EBn.appendChild(b)},md=f=>()=>{const p=E.p[sel];if(p)f(p)};
+mkb('e_isl',()=>tl=0);mkb('e_slab',()=>tl=1);mkb('e_frm',()=>tl=3);
+mkb('e_w1',md(p=>p[3]=Math.min(7,p[3]+.4)));mkb('e_w0',md(p=>p[3]=Math.max(1.2,p[3]-.4)));
+mkb('e_d1',md(p=>p[0]&&(p[4]=Math.min(.9,+(p[4]+.05).toFixed(2)))));mkb('e_d0',md(p=>p[0]&&(p[4]=Math.max(.25,+(p[4]-.05).toFixed(2)))));
+mkb('e_m',md(p=>p[0]==1&&(p[5]=3-p[5])));
+mkb('e_del',()=>{if(sel>=0){E.p.splice(sel,1);sel=-1}});mkb('e_all',()=>{E.p=[];sel=-1});
+mkb('',()=>E.f=E.f?0:1,'ef');mkb('',()=>E.w=E.w?0:1,'ew');
+function edL(){document.querySelectorAll('#eb button').forEach(b=>{if(b.dataset.k)b.textContent=tr(b.dataset.k)});$('eh').textContent=tr('e_h');$('el').textContent='☾ '+tr('e_moon')+' ↔';$('ep').textContent=tr('e_play');$('ex').textContent=tr('e_close');$('ce').textContent=tr('ce');upd()}
+ecv.onpointerdown=e=>{const r=ecv.getBoundingClientRect(),x=ux(e.clientX-r.left),y=uy(e.clientY-r.top);let i=hit(x,y);ecv.setPointerCapture(e.pointerId);
+ if(i<0){E.p.push([tl,cl(q4(x),-10.4,10.4),cl(q4(y),-1.6,7),tl==0?3.2:tl==3?2.2:3.6,tl?.6:.97,1,0]);i=E.p.length-1}
+ sel=i;drg=1;upd()};
+ecv.onpointermove=e=>{if(!drg||sel<0)return;const r=ecv.getBoundingClientRect(),p=E.p[sel];p[1]=cl(q4(ux(e.clientX-r.left)),-10.4,10.4);p[2]=cl(q4(uy(e.clientY-r.top)),-1.6,7);upd()};
+ecv.onpointerup=ecv.onpointercancel=()=>{drg=0;sv2()};
+function chk(){const p=srt(),n=p.length;let bad=0;
+ if(n<2||p[0][0]||p[n-1][0])return tr('e_c1');
+ for(let i=0;i<n-1;i++){const a=p[i],b=p[i+1];
+  if(E.f&&a[0]&&b[0]&&Math.abs(a[4]-b[4])>.22)bad=1;
+  if(a[0]==3&&b[0]||b[0]==3&&a[0])return tr('e_c2');
+  if(a[0]!=3&&b[0]!=3&&!lk(a,b))return tr('e_c3')}
+ return bad?tr('e_c4'):''}
+function mk(){const p=srt(),po=[],ft=[],P=p.map(([k,x,y,w,t,m],i)=>{if(k==3)po.push([x,y,w,3.4]);if(!k){const n=p[i+1];ft.push(n&&n[0]?n[4]:.5);return[x,y,w,.97,0]}return[x,y,w,t,k==3?3:E.w?m:1,k==3?3.4:.55]});
+ return{n:'✎',t:'',g:'',h:[''],T:[[E.a,E.b]],S:[E.a>0?E.a-.9:E.a+.9,E.b>.35?.22:.46],col:['#3d33a8','#27408f'],mc:0xe8dcff,mc2:0xff9fb4,cc:[0xc0a8ff,0xff9fd2,0x9fe8ff],F:E.f,ft,pw:E.f,fw:.12,tw:E.w,po:po.length?po:0,pt:.8,P}}
+function plE(){const m=chk();if(m){$('ei').textContent='⚠ '+m;return}
+ $('ed').style.display='none';const L=mk();
+ if(ci<0){ci=LV.length;const d=document.createElement('i'),j=ci;d.onclick=()=>go(j);$('dt').appendChild(d)}else LV[ci].ob.forEach(o=>sc.remove(o));
+ RU[ci]={t:ST.ru.e_nm,g:ST.ru.e_g,h:[ST.ru.e_h1]};EN[ci]={t:ST.en.e_nm,g:ST.en.e_g,h:[ST.en.e_h1]};Object.assign(L,(LG=='en'?EN:RU)[ci]);
+ LV[ci]=L;const n0=sc.children.length;bld(L,ci);L.ob=sc.children.slice(n0);
+ if(cur==ci){ui();ttl();say(L.g,7)}else go(ci)}
+$('e1').oninput=$('e2').oninput=()=>{E.a=$('e1').value/100;E.b=$('e2').value/100;sv2()};
+$('ce').onclick=()=>{$('ed').style.display='flex';rsE()};$('ex').onclick=()=>$('ed').style.display='none';$('ep').onclick=plE;
+addEventListener('resize',()=>{if($('ed').style.display=='flex')rsE()});
+addEventListener('keydown',e=>{if(e.key=='Escape')$('ed').style.display='none'});
+
+setLang(LG);setBr(BR);ui();ttl();say(LV[0].g,10);requestAnimationFrame(frame);
+</script></body></html>
